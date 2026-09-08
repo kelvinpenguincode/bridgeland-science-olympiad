@@ -95,6 +95,79 @@ export async function upsertAssignmentAction(_prev: ActionResult, formData: Form
   return { success: true };
 }
 
+export async function importRosterCsvAction(
+  rows: { email: string; team: string; event?: string }[]
+): Promise<ActionResult> {
+  await requireStaff();
+  if (rows.length === 0) return { success: false, error: "No rows to import." };
+
+  const supabase = await createClient();
+  const [{ data: members }, { data: teams }, { data: events }] = await Promise.all([
+    supabase.from("profiles").select("id, email"),
+    supabase.from("teams").select("id, name"),
+    supabase.from("scioly_events").select("id, name, slug"),
+  ]);
+
+  const byEmail = new Map((members ?? []).map((m) => [m.email.toLowerCase(), m.id]));
+  const byTeam = new Map((teams ?? []).map((t) => [t.name.toLowerCase(), t.id]));
+  const byEvent = new Map(
+    (events ?? []).flatMap((e) => [
+      [e.name.toLowerCase(), e.id],
+      [e.slug.toLowerCase(), e.id],
+    ] as [string, string][])
+  );
+
+  const missing: string[] = [];
+  const memberships: { team_id: string; profile_id: string }[] = [];
+  const assignments: { event_id: string; profile_id: string; team_id: string; season: string }[] = [];
+
+  for (const row of rows) {
+    const profileId = byEmail.get(row.email.toLowerCase());
+    const teamId = byTeam.get(row.team.toLowerCase());
+    if (!profileId) {
+      missing.push(`unknown email ${row.email}`);
+      continue;
+    }
+    if (!teamId) {
+      missing.push(`unknown team ${row.team}`);
+      continue;
+    }
+    memberships.push({ team_id: teamId, profile_id: profileId });
+    if (row.event) {
+      const eventId = byEvent.get(row.event.toLowerCase());
+      if (!eventId) {
+        missing.push(`unknown event ${row.event}`);
+        continue;
+      }
+      assignments.push({ event_id: eventId, profile_id: profileId, team_id: teamId, season: "2026-2027" });
+    }
+  }
+
+  if (memberships.length > 0) {
+    const { error } = await supabase.from("team_members").upsert(memberships, {
+      onConflict: "team_id,profile_id",
+    });
+    if (error) return { success: false, error: error.message };
+  }
+
+  if (assignments.length > 0) {
+    const { error } = await supabase.from("event_assignments").upsert(assignments, {
+      onConflict: "event_id,profile_id,season",
+    });
+    if (error) return { success: false, error: error.message };
+  }
+
+  revalidatePath("/admin/teams");
+  const assigned = memberships.length;
+  if (missing.length > 0) {
+    return {
+      success: true,
+      error: `Assigned ${assigned} row(s). Skipped: ${missing.slice(0, 8).join("; ")}${missing.length > 8 ? "…" : ""}`,
+    };
+  }
+  return { success: true };
+}
+
 export async function deleteAssignmentAction(id: string): Promise<ActionResult> {
   await requireStaff();
   const supabase = await createClient();

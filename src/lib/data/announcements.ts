@@ -1,6 +1,10 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
-import type { AnnouncementRow } from "@/types/database";
+import type { AnnouncementRow, AppRole } from "@/types/database";
+
+export type AnnouncementWithAuthor = AnnouncementRow & {
+  author?: { full_name: string | null; role: AppRole | null } | null;
+};
 
 /** Public/audience-aware announcement feed. RLS enforces audience visibility. */
 export async function listAnnouncements(limit = 20) {
@@ -12,8 +16,10 @@ export async function listAnnouncements(limit = 20) {
     .order("is_pinned", { ascending: false })
     .order("publish_at", { ascending: false })
     .limit(limit);
-  if (error) return [] as AnnouncementRow[];
-  return (data ?? []).filter((a) => !a.expires_at || new Date(a.expires_at) > new Date()) as AnnouncementRow[];
+  if (error) return [] as AnnouncementWithAuthor[];
+  return ((data ?? []) as AnnouncementWithAuthor[]).filter(
+    (a) => !a.expires_at || new Date(a.expires_at) > new Date()
+  );
 }
 
 export async function getLatestAnnouncement() {

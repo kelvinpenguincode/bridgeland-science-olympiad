@@ -15,6 +15,10 @@ export function academicYearOf(dateStr?: string | null): string {
   return `${year}-${year + 1}`;
 }
 
+function isValidDate(date: Date): boolean {
+  return !Number.isNaN(date.getTime());
+}
+
 /** Parses a `YYYY-MM-DD` date or ISO timestamp as a local Date (no TZ shift). */
 export function parseDateOnly(value: string): Date {
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -24,9 +28,18 @@ export function parseDateOnly(value: string): Date {
   return new Date(value);
 }
 
+function formatOrFallback(date: Date, opts: Intl.DateTimeFormatOptions, fallback: string): string {
+  if (!isValidDate(date)) return fallback;
+  try {
+    return new Intl.DateTimeFormat("en-US", opts).format(date);
+  } catch {
+    return fallback;
+  }
+}
+
 export function formatDate(value: string | Date, opts: Intl.DateTimeFormatOptions = DATE_FMT): string {
   const date = typeof value === "string" ? parseDateOnly(value) : value;
-  return new Intl.DateTimeFormat("en-US", opts).format(date);
+  return formatOrFallback(date, opts, typeof value === "string" ? value : "");
 }
 
 export function formatDateShort(value: string | Date): string {
@@ -37,22 +50,63 @@ export function formatDateWithWeekday(value: string | Date): string {
   return formatDate(value, DATE_WEEKDAY_FMT);
 }
 
+/** Parses Postgres `time`, `timestamptz`, ISO strings, and values like `7:00 PM`. */
+export function parseTimeValue(value: string): Date | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+
+  if (trimmed.includes("T") || /^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
+    const parsed = new Date(trimmed);
+    return isValidDate(parsed) ? parsed : null;
+  }
+
+  const twelveHour = trimmed.match(/^(\d{1,2})(?::(\d{2}))?(?::\d{2})?\s*(am|pm)$/i);
+  if (twelveHour) {
+    let hours = Number(twelveHour[1]);
+    const minutes = Number(twelveHour[2] ?? 0);
+    const meridiem = twelveHour[3].toLowerCase();
+    if (meridiem === "pm" && hours < 12) hours += 12;
+    if (meridiem === "am" && hours === 12) hours = 0;
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return isValidDate(date) ? date : null;
+  }
+
+  const parts = trimmed.split(":");
+  if (parts.length >= 2) {
+    const hours = Number(parts[0]);
+    const minutes = Number(parts[1]);
+    if (
+      Number.isFinite(hours) &&
+      Number.isFinite(minutes) &&
+      hours >= 0 &&
+      hours < 24 &&
+      minutes >= 0 &&
+      minutes < 60
+    ) {
+      const date = new Date();
+      date.setHours(hours, minutes, 0, 0);
+      return isValidDate(date) ? date : null;
+    }
+  }
+
+  return null;
+}
+
 export function formatTime(value: string | null | undefined): string {
   if (!value) return "";
-  const [h, m] = value.split(":").map(Number);
-  const date = new Date();
-  date.setHours(h, m, 0, 0);
-  return new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" }).format(date);
+  const parsed = parseTimeValue(value);
+  if (!parsed) return value.trim();
+  return formatOrFallback(parsed, { hour: "numeric", minute: "2-digit" }, value.trim());
 }
 
 export function formatDateTime(value: string | Date): string {
   const date = typeof value === "string" ? new Date(value) : value;
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
+  return formatOrFallback(
+    date,
+    { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" },
+    typeof value === "string" ? value : ""
+  );
 }
 
 export function isFuture(value: string | Date): boolean {

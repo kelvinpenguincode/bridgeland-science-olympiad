@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireStaff } from "@/lib/auth/session";
+import { requireAdmin } from "@/lib/auth/session";
 import type { ActionResult } from "@/components/admin/crud-dialog";
 import type { OfficerCategory } from "@/types/database";
 
@@ -11,7 +11,7 @@ function str(formData: FormData, key: string) {
 }
 
 export async function upsertOfficerAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
-  await requireStaff();
+  await requireAdmin();
 
   const id = str(formData, "id");
   const fullName = str(formData, "full_name");
@@ -53,7 +53,7 @@ export async function upsertOfficerAction(_prev: ActionResult, formData: FormDat
 }
 
 export async function deleteOfficerAction(id: string): Promise<ActionResult> {
-  await requireStaff();
+  await requireAdmin();
   const supabase = await createClient();
   const { error } = await supabase.from("officers").delete().eq("id", id);
   if (error) return { success: false, error: error.message };

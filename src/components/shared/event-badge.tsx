@@ -49,8 +49,8 @@ const EVENT_CATEGORY_STYLES: Record<EventCategory, string> = {
 
 export function CategoryBadge({ category, className }: { category: EventCategory; className?: string }) {
   return (
-    <Badge variant="outline" className={cn(EVENT_CATEGORY_STYLES[category], className)}>
-      {EVENT_CATEGORY_LABELS[category]}
+    <Badge variant="outline" className={cn(EVENT_CATEGORY_STYLES[category] ?? "bg-muted text-muted-foreground border-border", className)}>
+      {EVENT_CATEGORY_LABELS[category] ?? category}
     </Badge>
   );
 }

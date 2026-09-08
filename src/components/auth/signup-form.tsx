@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { MailCheck, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,9 +26,9 @@ const signupSchema = z
 type SignupValues = z.infer<typeof signupSchema>;
 
 export function SignupForm() {
+  const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
 
   const {
     register,
@@ -43,12 +44,11 @@ export function SignupForm() {
     setSubmitting(true);
     setFormError(null);
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: values.email,
       password: values.password,
       options: {
         data: { full_name: values.fullName },
-        emailRedirectTo: `${window.location.origin}/auth/confirm?next=/dashboard`,
       },
     });
     if (error) {
@@ -56,22 +56,19 @@ export function SignupForm() {
       setSubmitting(false);
       return;
     }
-    setSubmittedEmail(values.email);
-    setSubmitting(false);
-  }
-
-  if (submittedEmail) {
-    return (
-      <div className="flex flex-col items-center gap-3 text-center">
-        <span className="flex size-12 items-center justify-center rounded-full bg-brand-orange-light text-brand-orange-dark">
-          <MailCheck className="size-6" aria-hidden="true" />
-        </span>
-        <p className="text-sm text-slate-600">
-          We sent a confirmation link to <strong className="text-brand-navy">{submittedEmail}</strong>. Click it to
-          activate your account, then sign in.
-        </p>
-      </div>
-    );
+    if (!data.session) {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+      if (signInError) {
+        setFormError(signInError.message);
+        setSubmitting(false);
+        return;
+      }
+    }
+    router.push("/dashboard");
+    router.refresh();
   }
 
   return (

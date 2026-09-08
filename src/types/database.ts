@@ -148,6 +148,7 @@ export type AnnouncementRow = Timestamps & {
   summary: string;
   content: string;
   author_id: string | null;
+  posted_as: string | null;
   publish_at: string;
   expires_at: string | null;
   priority: AnnouncementPriority;
@@ -453,6 +454,7 @@ export type Database = {
       };
       is_admin: { Args: Record<string, never>; Returns: boolean };
       is_staff: { Args: Record<string, never>; Returns: boolean };
+      claim_first_admin: { Args: Record<string, never>; Returns: boolean };
     };
     Enums: {
       app_role: AppRole;

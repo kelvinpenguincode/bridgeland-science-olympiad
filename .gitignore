@@ -34,6 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# Local admin bootstrap — contains a real account password
+supabase/bootstrap-admin.sql
+
 # vercel
 .vercel
 

@@ -57,7 +57,7 @@ export async function getRecentActivity(limit = 8) {
   const supabase = await createClient();
   const { data } = await supabase
     .from("announcements")
-    .select("id, title, publish_at, author:profiles(full_name)")
+    .select("id, title, publish_at, posted_as, author:profiles(full_name, role)")
     .order("publish_at", { ascending: false })
     .limit(limit);
   return data ?? [];

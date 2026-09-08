@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { Inter, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SITE } from "@/lib/content/site";
 import "./globals.css";
 
-const geistSans = Geist({
+const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
@@ -16,21 +17,13 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-heading",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  display: "swap",
-});
-
 export const metadata: Metadata = {
   title: {
-    default: "Bridgeland Science Olympiad",
-    template: "%s | Bridgeland Science Olympiad",
+    default: SITE.name,
+    template: `%s | ${SITE.name}`,
   },
-  description:
-    "Official site of the Bridgeland High School Science Olympiad team — compete, discover, and innovate. Cypress, Texas.",
-  metadataBase: new URL("https://bridgelandscioly.example.org"),
+  description: SITE.tagline,
+  metadataBase: new URL("https://bridgelandscienceolympiad.org"),
   keywords: [
     "Bridgeland Science Olympiad",
     "Science Olympiad",
@@ -47,7 +40,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      data-scroll-behavior="smooth"
+      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <TooltipProvider delay={200}>

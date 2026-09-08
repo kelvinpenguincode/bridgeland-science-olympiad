@@ -72,7 +72,13 @@ Without real Supabase credentials the app still builds (placeholder values keep 
 2. Copy the Project URL and `anon` key into `.env.local`.
 3. Run the SQL migrations (see below) to create the schema, functions, and RLS policies.
 4. (Optional but recommended for a realistic demo) run the seed script.
-5. Enable email confirmations under **Authentication → Providers → Email** if you want the signup-verification flow to require it (it's on by default).
+5. Turn **off** email confirmation under **Authentication → Sign In / Providers → Email → Confirm email** so new members can sign in immediately after creating an account. If anyone already signed up while confirmation was on, confirm them in the SQL Editor with:
+
+   ```sql
+   update auth.users
+   set email_confirmed_at = coalesce(email_confirmed_at, now())
+   where email_confirmed_at is null;
+   ```
 
 ### Running the migrations
 

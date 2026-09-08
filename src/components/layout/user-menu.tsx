@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -78,10 +79,12 @@ export function UserMenu({ profile }: { profile: NavbarProfile }) {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel className="flex flex-col gap-0.5 px-2 py-1.5">
-            <span className="text-sm font-medium text-foreground">{displayName}</span>
-            <span className="text-xs text-muted-foreground">{ROLE_LABELS[profile.role]}</span>
-          </DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="flex flex-col gap-0.5 px-2 py-1.5">
+              <span className="text-sm font-medium text-foreground">{displayName}</span>
+              <span className="text-xs text-muted-foreground">{ROLE_LABELS[profile.role]}</span>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem render={<Link href="/dashboard" />}>
             <LayoutDashboard className="size-4" />

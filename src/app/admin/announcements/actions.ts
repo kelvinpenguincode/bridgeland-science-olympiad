@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireStaff } from "@/lib/auth/session";
+import { isAdminRole } from "@/lib/auth/permissions";
 import { slugify } from "@/lib/utils/slugify";
 import type { ActionResult } from "@/components/admin/crud-dialog";
 import type { AnnouncementAudience, AnnouncementPriority } from "@/types/database";
@@ -43,6 +44,9 @@ export async function upsertAnnouncementAction(_prev: ActionResult, formData: Fo
     publish_at: publishAt ? new Date(publishAt).toISOString() : new Date().toISOString(),
     expires_at: expiresAt ? new Date(expiresAt).toISOString() : null,
     is_pinned: isPinned,
+    posted_as: isAdminRole(profile.role)
+      ? "Admins"
+      : profile.preferred_name || profile.full_name,
   };
 
   const { error } = id

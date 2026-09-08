@@ -2,14 +2,15 @@ import { Megaphone, Pin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { PriorityBadge } from "@/components/shared/event-badge";
 import { formatDate } from "@/lib/utils/date";
-import type { AnnouncementRow } from "@/types/database";
+import { announcementByline } from "@/lib/content/announcer";
+import type { AnnouncementWithAuthor } from "@/lib/data/announcements";
 import { cn } from "@/lib/utils";
 
 export function AnnouncementCard({
   announcement,
   className,
 }: {
-  announcement: AnnouncementRow;
+  announcement: AnnouncementWithAuthor;
   className?: string;
 }) {
   return (
@@ -27,7 +28,9 @@ export function AnnouncementCard({
             <PriorityBadge priority={announcement.priority} />
           </div>
           <p className="line-clamp-2 text-sm text-slate-600">{announcement.summary}</p>
-          <p className="text-xs text-muted-foreground">{formatDate(announcement.publish_at)}</p>
+          <p className="text-xs text-muted-foreground">
+            {announcement.posted_as || announcementByline(announcement.author)} · {formatDate(announcement.publish_at)}
+          </p>
         </div>
       </CardContent>
     </Card>

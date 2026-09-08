@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { requireStaff } from "@/lib/auth/session";
+import { requireAdmin } from "@/lib/auth/session";
 import type { ActionResult } from "@/components/admin/crud-dialog";
 import type { PlacementStatus } from "@/types/database";
 
@@ -11,7 +11,7 @@ function str(formData: FormData, key: string) {
 }
 
 export async function upsertPlacementTestAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
-  const staff = await requireStaff();
+  const staff = await requireAdmin();
 
   const id = str(formData, "id");
   const eventId = str(formData, "event_id");
@@ -43,7 +43,7 @@ export async function upsertPlacementTestAction(_prev: ActionResult, formData: F
 }
 
 export async function deletePlacementTestAction(id: string): Promise<ActionResult> {
-  await requireStaff();
+  await requireAdmin();
   const supabase = await createClient();
   const { error } = await supabase.from("placement_tests").delete().eq("id", id);
   if (error) return { success: false, error: error.message };
@@ -53,7 +53,7 @@ export async function deletePlacementTestAction(id: string): Promise<ActionResul
 }
 
 export async function toggleTestReleaseAction(testId: string, released: boolean): Promise<ActionResult> {
-  await requireStaff();
+  await requireAdmin();
   const supabase = await createClient();
   const { error } = await supabase
     .from("placement_tests")
@@ -66,7 +66,7 @@ export async function toggleTestReleaseAction(testId: string, released: boolean)
 }
 
 export async function upsertPlacementResultAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
-  await requireStaff();
+  await requireAdmin();
 
   const id = str(formData, "id");
   const placementTestId = str(formData, "placement_test_id");
@@ -107,7 +107,7 @@ export async function upsertPlacementResultAction(_prev: ActionResult, formData:
 }
 
 export async function deletePlacementResultAction(id: string): Promise<ActionResult> {
-  await requireStaff();
+  await requireAdmin();
   const supabase = await createClient();
   const { error } = await supabase.from("placement_results").delete().eq("id", id);
   if (error) return { success: false, error: error.message };
@@ -116,7 +116,7 @@ export async function deletePlacementResultAction(id: string): Promise<ActionRes
 }
 
 export async function recalculateRanksAction(testId: string): Promise<ActionResult> {
-  await requireStaff();
+  await requireAdmin();
   const supabase = await createClient();
   const { error } = await supabase.rpc("recompute_placement_ranks", { p_test_id: testId });
   if (error) return { success: false, error: error.message };
@@ -131,7 +131,7 @@ export interface CsvImportRow {
 }
 
 export async function bulkImportScoresAction(testId: string, rows: CsvImportRow[]): Promise<ActionResult> {
-  await requireStaff();
+  await requireAdmin();
   if (rows.length === 0) return { success: false, error: "No rows to import." };
 
   const supabase = await createClient();

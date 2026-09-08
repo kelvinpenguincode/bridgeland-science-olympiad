@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { MembersExplorer } from "@/components/admin/members-explorer";
 import { listAllMembersForAdmin } from "@/lib/data/members";
+import { requireAdmin } from "@/lib/auth/session";
 
 export const metadata: Metadata = { title: "Manage Members | Bridgeland Science Olympiad" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminMembersPage() {
+  await requireAdmin("/admin/members");
   const members = await listAllMembersForAdmin();
 
   return (

@@ -13,6 +13,8 @@ import {
   MyTeamCard,
 } from "@/components/dashboard/dashboard-cards";
 import { formatDate, formatTime } from "@/lib/utils/date";
+import { ClaimFirstAdminBanner } from "./claim-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentProfile } from "@/lib/auth/session";
 import { getMyEventMemberships, getMyTeams } from "@/lib/data/member";
 import { getMyAttendanceStats } from "@/lib/data/attendance";
@@ -42,6 +44,18 @@ export default async function DashboardPage() {
       listCalendarEvents({ from: new Date(), categories: ["deadline"] }),
     ]);
 
+  let showFirstAdminClaim = false;
+  try {
+    const admin = createAdminClient();
+    const { count } = await admin
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .in("role", ["admin", "sponsor"]);
+    showFirstAdminClaim = (count ?? 0) === 0;
+  } catch {
+    showFirstAdminClaim = false;
+  }
+
   const firstName = (profile.preferred_name || profile.full_name).split(" ")[0];
   const latestPlacement = placementResults[0] as
     | { status: string; placement_test: { results_released: boolean; event: { name: string } | null } | null }
@@ -53,6 +67,15 @@ export default async function DashboardPage() {
         <h2 className="font-heading text-2xl font-bold text-brand-navy">Welcome back, {firstName}!</h2>
         <p className="mt-1 text-sm text-muted-foreground">Here&apos;s what&apos;s happening with the team.</p>
       </div>
+
+      {showFirstAdminClaim && <ClaimFirstAdminBanner />}
+
+      {teams.length === 0 && (
+        <p className="rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+          You&apos;re not on a competition team yet. Officers and admins assign rosters — including from a
+          spreadsheet — under Admin → Teams. Once you&apos;re placed, your team and events will show up here.
+        </p>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MyTeamCard teams={teams} />

@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
-import { requireStaffOrCaptain } from "@/lib/auth/session";
+import { requireStaff } from "@/lib/auth/session";
 import { DashboardShell } from "@/components/shared/dashboard-shell";
-import { ADMIN_SIDEBAR_SECTIONS } from "@/components/admin/admin-sidebar-config";
+import { getAdminSidebarSections } from "@/components/admin/admin-sidebar-config";
 
 export default async function AdminLayout({ children }: { children: ReactNode }) {
-  const profile = await requireStaffOrCaptain("/admin");
+  const profile = await requireStaff("/admin");
 
   return (
     <DashboardShell
-      sections={ADMIN_SIDEBAR_SECTIONS}
+      sections={getAdminSidebarSections(profile.role)}
       title="Admin Panel"
       profile={{
         fullName: profile.full_name,

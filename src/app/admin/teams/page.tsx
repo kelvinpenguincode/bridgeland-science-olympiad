@@ -11,6 +11,7 @@ import { listTeams, listAllTeamMemberships, listAllEventAssignments } from "@/li
 import { listAllMembersForAdmin } from "@/lib/data/members";
 import { listAllEventsForAdmin } from "@/lib/data/events";
 import { NewTeamButton, EditTeamButton, ManageRosterButton } from "./team-dialogs";
+import { TeamCsvImportButton } from "./team-csv-import";
 import { NewAssignmentButton, EditAssignmentButton } from "./assignment-dialogs";
 import { deleteTeamAction, deleteAssignmentAction } from "./actions";
 
@@ -50,6 +51,10 @@ export default async function AdminTeamsPage() {
         <div>
           <h2 className="font-heading text-2xl font-bold text-brand-navy">Teams &amp; Assignments</h2>
           <p className="mt-1 text-sm text-muted-foreground">Manage rosters and the season&apos;s student-to-event assignment matrix.</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <TeamCsvImportButton />
+          <NewTeamButton />
         </div>
       </div>
 

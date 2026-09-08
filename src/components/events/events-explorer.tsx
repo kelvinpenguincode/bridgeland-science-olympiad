@@ -18,7 +18,7 @@ export function EventsExplorer({ events }: { events: SciolyEventRow[] }) {
       if (category !== ALL_VALUE && event.category !== category) return false;
       if (search) {
         const q = search.toLowerCase();
-        if (!event.name.toLowerCase().includes(q) && !event.description.toLowerCase().includes(q)) {
+        if (!event.name.toLowerCase().includes(q) && !(event.description ?? "").toLowerCase().includes(q)) {
           return false;
         }
       }

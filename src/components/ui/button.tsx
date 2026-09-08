@@ -43,11 +43,17 @@ function Button({
   className,
   variant = "default",
   size = "default",
+  nativeButton,
   ...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  // `render` is only ever used here to swap in a non-<button> element (Link, <a>, <div>, ...),
+  // so default `nativeButton` to `false` whenever it's provided. Callers can still override
+  // this explicitly (e.g. for the rare case of rendering an actual <button>).
+  const resolvedNativeButton = nativeButton ?? !props.render
   return (
     <ButtonPrimitive
       data-slot="button"
+      nativeButton={resolvedNativeButton}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />

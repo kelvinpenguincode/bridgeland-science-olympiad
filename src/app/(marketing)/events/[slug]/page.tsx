@@ -32,7 +32,7 @@ export async function generateMetadata({
   if (!event) return { title: "Event Not Found | Bridgeland Science Olympiad" };
   return {
     title: `${event.name} | Bridgeland Science Olympiad`,
-    description: event.description,
+    description: event.description ?? undefined,
   };
 }
 

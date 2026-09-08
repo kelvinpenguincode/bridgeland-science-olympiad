@@ -13,6 +13,7 @@ import { NewResultButton, EditResultButton } from "./result-dialogs";
 import { TestPicker } from "./test-picker";
 import { RecalculateRanksButton, ReleaseTestButton } from "./test-actions-bar";
 import { CsvImportButton } from "./csv-import";
+import { requireAdmin } from "@/lib/auth/session";
 import { deletePlacementTestAction, deletePlacementResultAction } from "./actions";
 
 export const metadata: Metadata = { title: "Manage Placement Testing | Bridgeland Science Olympiad" };
@@ -23,6 +24,7 @@ export default async function AdminPlacementPage({
 }: {
   searchParams: Promise<{ test?: string }>;
 }) {
+  await requireAdmin("/admin/placement");
   const { test: testId } = await searchParams;
   const [tests, members, events] = await Promise.all([
     listAllPlacementTestsForAdmin(),

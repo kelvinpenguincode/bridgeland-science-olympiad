@@ -9,6 +9,7 @@ import { listAllEventsForAdmin } from "@/lib/data/events";
 import { CompetitionPicker } from "./competition-picker";
 import { ReleaseResultsButton } from "./release-button";
 import { NewResultButton, EditResultButton } from "./result-dialogs";
+import { requireAdmin } from "@/lib/auth/session";
 import { deleteResultAction } from "./actions";
 
 export const metadata: Metadata = { title: "Manage Results | Bridgeland Science Olympiad" };
@@ -19,6 +20,7 @@ export default async function AdminResultsPage({
 }: {
   searchParams: Promise<{ competition?: string }>;
 }) {
+  await requireAdmin("/admin/results");
   const { competition: competitionId } = await searchParams;
   const [competitions, teams, events] = await Promise.all([listCompetitions(), listTeams(), listAllEventsForAdmin()]);
 

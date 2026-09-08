@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ResultBadge } from "@/components/shared/event-badge";
 import { EmptyState } from "@/components/shared/empty-state";
 import { DataTable } from "@/components/shared/data-table";
-import { formatDate, formatTime } from "@/lib/utils/date";
+import { formatDate, formatDateTime, formatTime } from "@/lib/utils/date";
 import { COMPETITION_TYPE_LABELS } from "@/types/domain";
 import {
   getCompetitionAssignments,
@@ -139,8 +139,10 @@ export default async function CompetitionDetailPage({ params }: { params: Promis
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         {s.start_time && (
                           <span>
-                            {formatTime(s.start_time)}
-                            {s.end_time ? ` – ${formatTime(s.end_time)}` : ""}
+                            {s.start_time.includes("T") ? formatDateTime(s.start_time) : formatTime(s.start_time)}
+                            {s.end_time
+                              ? ` – ${s.end_time.includes("T") ? formatDateTime(s.end_time) : formatTime(s.end_time)}`
+                              : ""}
                           </span>
                         )}
                         {s.location && <span>{s.location}</span>}

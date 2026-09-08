@@ -20,22 +20,25 @@ export function NavbarClient({ profile }: { profile: NavbarProfile | null }) {
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-white/95 backdrop-blur supports-backdrop-filter:bg-white/80">
+    <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-black/70 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <Logo />
+        <Logo variant="light" />
 
-        <nav aria-label="Primary" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-1 xl:flex">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "rounded-md px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-muted hover:text-brand-navy",
-                isActive(link.href) && "bg-brand-orange-light text-brand-orange-dark"
+                "relative px-3 py-2 text-xs font-medium tracking-[0.14em] text-white/70 uppercase transition-colors hover:text-white",
+                isActive(link.href) && "text-white"
               )}
               aria-current={isActive(link.href) ? "page" : undefined}
             >
               {link.label}
+              {isActive(link.href) && (
+                <span className="absolute inset-x-3 -bottom-0.5 h-px bg-brand-orange" aria-hidden="true" />
+              )}
             </Link>
           ))}
         </nav>
@@ -44,7 +47,7 @@ export function NavbarClient({ profile }: { profile: NavbarProfile | null }) {
           <Button
             variant="ghost"
             size="icon-sm"
-            className="hidden sm:inline-flex"
+            className="hidden text-white/80 hover:bg-white/10 hover:text-white sm:inline-flex"
             aria-label="Search the site"
             onClick={() => setSearchOpen(true)}
           >
@@ -78,8 +81,8 @@ export function NavbarClient({ profile }: { profile: NavbarProfile | null }) {
                     href={link.href}
                     onClick={() => setMobileOpen(false)}
                     className={cn(
-                      "rounded-md px-3 py-2.5 text-base font-medium text-slate-700 hover:bg-muted",
-                      isActive(link.href) && "bg-brand-orange-light text-brand-orange-dark"
+                      "rounded-md px-3 py-2.5 text-base font-medium text-slate-200 hover:bg-white/10",
+                      isActive(link.href) && "bg-brand-orange/20 text-brand-orange"
                     )}
                   >
                     {link.label}
@@ -111,7 +114,7 @@ export function NavbarClient({ profile }: { profile: NavbarProfile | null }) {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden"
+              className="text-white hover:bg-white/10 xl:hidden"
               aria-label="Open menu"
               onClick={() => setMobileOpen(true)}
             >

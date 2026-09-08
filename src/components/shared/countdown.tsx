@@ -14,12 +14,34 @@ function getParts(target: number) {
 /** Live-ticking countdown to a target ISO date/time. */
 export function Countdown({ target, className }: { target: string; className?: string }) {
   const targetMs = new Date(target).getTime();
-  const [parts, setParts] = useState(() => getParts(targetMs));
+  // Start as `null` so the server-rendered and initial client-rendered markup
+  // match exactly (both render the placeholder below); the real, time-based
+  // value is only computed after mount to avoid a hydration mismatch caused
+  // by `Date.now()` shifting slightly between server render and client hydration.
+  const [parts, setParts] = useState<ReturnType<typeof getParts> | null>(null);
 
   useEffect(() => {
+    setParts(getParts(targetMs));
     const id = setInterval(() => setParts(getParts(targetMs)), 1000);
     return () => clearInterval(id);
   }, [targetMs]);
+
+  if (!parts) {
+    return (
+      <div className={className} role="timer" aria-live="off">
+        <div className="flex gap-3">
+          {["Days", "Hrs", "Min", "Sec"].map((label) => (
+            <div key={label} className="flex flex-col items-center">
+              <span className="font-heading text-2xl font-bold tabular-nums text-brand-navy">--</span>
+              <span className="text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if (parts.done) {
     return <p className={className}>Happening now!</p>;

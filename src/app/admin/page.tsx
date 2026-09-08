@@ -15,6 +15,9 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { formatDateTime } from "@/lib/utils/date";
 import { getAdminStats, getRecentActivity } from "@/lib/data/admin-stats";
+import { getCurrentProfile } from "@/lib/auth/session";
+import { isAdminRole } from "@/lib/auth/permissions";
+import { announcementByline } from "@/lib/content/announcer";
 
 export const metadata: Metadata = { title: "Admin Overview | Bridgeland Science Olympiad" };
 export const dynamic = "force-dynamic";
@@ -30,7 +33,11 @@ const QUICK_ACTIONS = [
 ];
 
 export default async function AdminOverviewPage() {
+  const profile = await getCurrentProfile();
   const [stats, activity] = await Promise.all([getAdminStats(), getRecentActivity()]);
+  const actions = isAdminRole(profile?.role)
+    ? QUICK_ACTIONS
+    : QUICK_ACTIONS.filter((a) => !["/admin/placement"].includes(a.href));
 
   return (
     <div className="space-y-8">
@@ -57,7 +64,7 @@ export default async function AdminOverviewPage() {
       <section>
         <h3 className="mb-4 text-sm font-semibold tracking-wide text-muted-foreground uppercase">Quick Actions</h3>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {QUICK_ACTIONS.map((action) => (
+          {actions.map((action) => (
             <Button
               key={action.href}
               variant="outline"
@@ -87,7 +94,11 @@ export default async function AdminOverviewPage() {
                   <div>
                     <p className="text-sm font-medium text-brand-navy">{a.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      by {(a.author as { full_name: string } | null)?.full_name ?? "Team"}
+                      by{" "}
+                      {(a as { posted_as?: string | null }).posted_as ||
+                        announcementByline(
+                          (a.author as { full_name: string | null; role: "admin" | "officer" | null } | null) ?? null
+                        )}
                     </p>
                   </div>
                 </div>

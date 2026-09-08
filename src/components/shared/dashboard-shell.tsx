@@ -3,17 +3,20 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ExternalLink, Menu, type LucideIcon } from "lucide-react";
+import { ExternalLink, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Logo, LogoMark } from "@/components/shared/logo";
 import { UserMenu, type NavbarProfile } from "@/components/layout/user-menu";
+import { DynamicIcon } from "@/components/shared/dynamic-icon";
 import { cn } from "@/lib/utils";
 
 export interface SidebarNavItem {
   href: string;
   label: string;
-  icon: LucideIcon;
+  /** Lucide icon name (resolved client-side) — keep this a plain string so
+   *  these nav configs stay serializable across the server/client boundary. */
+  icon: string;
   exact?: boolean;
 }
 
@@ -51,7 +54,7 @@ function SidebarNav({ sections, onNavigate }: { sections: SidebarNavSection[]; o
                   active ? "bg-brand-orange text-white" : "text-slate-300 hover:bg-white/10 hover:text-white"
                 )}
               >
-                <item.icon className="size-4 shrink-0" aria-hidden="true" />
+                <DynamicIcon name={item.icon} className="size-4 shrink-0" aria-hidden="true" />
                 {item.label}
               </Link>
             );

@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DataTable } from "@/components/shared/data-table";
 import { DeleteButton } from "@/components/admin/delete-button";
+import { requireAdmin } from "@/lib/auth/session";
 import { listAllOfficersForAdmin } from "@/lib/data/officers";
 import { EditOfficerButton, NewOfficerButton } from "./officer-dialogs";
 import { deleteOfficerAction } from "./actions";
@@ -21,6 +22,7 @@ function initials(name: string) {
 }
 
 export default async function AdminOfficersPage() {
+  await requireAdmin("/admin/officers");
   const officers = await listAllOfficersForAdmin();
 
   return (

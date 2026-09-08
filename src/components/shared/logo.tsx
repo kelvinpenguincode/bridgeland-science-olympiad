@@ -26,21 +26,9 @@ export function Logo({
     >
       <LogoMark light={isLight} />
       <span className="flex flex-col leading-tight">
-        <span
-          className={cn(
-            "font-heading text-base font-bold tracking-tight",
-            isLight ? "text-white" : "text-brand-navy"
-          )}
-        >
-          Bridgeland
-        </span>
-        <span
-          className={cn(
-            "text-[11px] font-semibold tracking-[0.18em] uppercase",
-            isLight ? "text-orange-300" : "text-brand-orange"
-          )}
-        >
-          Science Olympiad
+        <span className="flex items-baseline gap-1 font-heading text-base font-bold tracking-tight">
+          <span className={isLight ? "text-white" : "text-foreground"}>Bridgeland</span>
+          <span className="text-brand-orange">SciOly</span>
         </span>
       </span>
     </Link>

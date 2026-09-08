@@ -1,11 +1,11 @@
 export const NAV_LINKS = [
   { href: "/", label: "Home" },
+  { href: "/about", label: "About Us" },
+  { href: "/accomplishments", label: "Accomplishments" },
   { href: "/team", label: "Team" },
   { href: "/events", label: "Events" },
-  { href: "/meetings", label: "Meetings" },
   { href: "/calendar", label: "Calendar" },
   { href: "/competitions", label: "Competitions" },
   { href: "/resources", label: "Resources" },
-  { href: "/placement", label: "Placement" },
-  { href: "/results", label: "Results" },
+  { href: "/contact", label: "Contact Us" },
 ];

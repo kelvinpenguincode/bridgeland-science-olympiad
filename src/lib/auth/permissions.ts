@@ -26,7 +26,7 @@ export function canManageTeamContent(role: AppRole | null | undefined): boolean 
 }
 
 export function canAccessAdmin(role: AppRole | null | undefined): boolean {
-  return isStaffRole(role) || isEventCaptainRole(role);
+  return isStaffRole(role);
 }
 
 export function canManageRoster(role: AppRole | null | undefined): boolean {

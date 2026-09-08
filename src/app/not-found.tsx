@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/footer";
 
 export default function NotFound() {
   return (
-    <>
+    <div className="marketing-surface flex min-h-full flex-1 flex-col">
       <Navbar />
       <main id="main-content" className="flex-1">
         <div className="mx-auto flex max-w-xl flex-col items-center px-4 py-24 text-center sm:px-6">
@@ -27,6 +27,6 @@ export default function NotFound() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

@@ -90,7 +90,7 @@ export async function getEventNextPractice(eventName: string) {
     .order("start_at", { ascending: true })
     .limit(20);
   const nameLower = eventName.toLowerCase();
-  return (data ?? []).find((c) => c.title.toLowerCase().includes(nameLower)) ?? null;
+  return (data ?? []).find((c) => (c.title ?? "").toLowerCase().includes(nameLower)) ?? null;
 }
 
 export async function getEventCompetitionHistory(eventId: string) {
