@@ -58,7 +58,8 @@ export default async function AdminAnnouncementsPage() {
               <div className="flex justify-end gap-1">
                 <EditAnnouncementButton announcement={a} teams={teams} events={events} />
                 <DeleteButton
-                  action={() => deleteAnnouncementAction(a.id)}
+                  action={deleteAnnouncementAction}
+                  id={a.id}
                   title="Delete this announcement?"
                   description={`"${a.title}" will be permanently removed.`}
                 />

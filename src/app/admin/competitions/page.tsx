@@ -57,7 +57,7 @@ export default async function AdminCompetitionsPage() {
               <div className="flex justify-end gap-1">
                 <ManageTeamsButton competitionId={c.id} allTeams={teams} registeredTeamIds={registeredMap.get(c.id) ?? []} />
                 <EditCompetitionButton competition={c} />
-                <DeleteButton action={() => deleteCompetitionAction(c.id)} description={`"${c.name}" and its schedule/results will be permanently removed.`} />
+                <DeleteButton action={deleteCompetitionAction} id={c.id} description={`"${c.name}" and its schedule/results will be permanently removed.`} />
               </div>
             ),
           },

@@ -174,7 +174,7 @@ export default async function AdminTeamsPage() {
                 render: (a) => (
                   <div className="flex justify-end gap-1">
                     <EditAssignmentButton assignment={a} events={eventOptions} members={memberOptions} teams={teamOptions} />
-                    <DeleteButton action={() => deleteAssignmentAction(a.id)} description="This assignment will be permanently removed." />
+                    <DeleteButton action={deleteAssignmentAction} id={a.id} description="This assignment will be permanently removed." />
                   </div>
                 ),
               },
@@ -213,7 +213,7 @@ export default async function AdminTeamsPage() {
                         rosterProfileIds={memberships.filter((m) => m.team_id === t.id).map((m) => m.profile_id)}
                       />
                       <EditTeamButton team={t} />
-                      <DeleteButton action={() => deleteTeamAction(t.id)} description={`"${t.name}" and its roster links will be permanently removed.`} />
+                      <DeleteButton action={deleteTeamAction} id={t.id} description={`"${t.name}" and its roster links will be permanently removed.`} />
                     </div>
                   ),
                 },

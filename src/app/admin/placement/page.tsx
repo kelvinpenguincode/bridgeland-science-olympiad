@@ -72,7 +72,8 @@ export default async function AdminPlacementPage({
                 <div className="flex flex-wrap items-center gap-2">
                   <EditTestButton test={selected} events={eventOptions} />
                   <DeleteButton
-                    action={() => deletePlacementTestAction(selected.id)}
+                    action={deletePlacementTestAction}
+                    id={selected.id}
                     description="This will delete the test and all its scores."
                     label="Delete Test"
                   />
@@ -116,7 +117,7 @@ export default async function AdminPlacementPage({
                     render: (r) => (
                       <div className="flex justify-end gap-1">
                         <EditResultButton result={r} testId={selected.id} members={memberOptions} />
-                        <DeleteButton action={() => deletePlacementResultAction(r.id)} description="This score will be permanently removed." />
+                        <DeleteButton action={deletePlacementResultAction} id={r.id} description="This score will be permanently removed." />
                       </div>
                     ),
                   },

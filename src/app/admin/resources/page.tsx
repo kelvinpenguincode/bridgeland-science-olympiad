@@ -54,7 +54,7 @@ export default async function AdminResourcesPage() {
             render: (r) => (
               <div className="flex justify-end gap-1">
                 <EditResourceButton resource={r} events={eventOptions} />
-                <DeleteButton action={() => deleteResourceAction(r.id)} description={`"${r.title}" will be permanently removed.`} />
+                <DeleteButton action={deleteResourceAction} id={r.id} description={`"${r.title}" will be permanently removed.`} />
               </div>
             ),
           },

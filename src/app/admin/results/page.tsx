@@ -70,7 +70,7 @@ export default async function AdminResultsPage({
                 render: (r) => (
                   <div className="flex justify-end gap-1">
                     <EditResultButton result={r} competitionId={selected.id} teams={teamOptions} events={eventOptions} />
-                    <DeleteButton action={() => deleteResultAction(r.id)} description="This result will be permanently removed." />
+                    <DeleteButton action={deleteResultAction} id={r.id} description="This result will be permanently removed." />
                   </div>
                 ),
               },

@@ -48,7 +48,7 @@ export default async function AdminMeetingsPage() {
             render: (m) => (
               <div className="flex justify-end gap-1">
                 <EditMeetingButton meeting={m} />
-                <DeleteButton action={() => deleteMeetingAction(m.id)} description={`"${m.title}" will be permanently removed.`} />
+                <DeleteButton action={deleteMeetingAction} id={m.id} description={`"${m.title}" will be permanently removed.`} />
               </div>
             ),
           },

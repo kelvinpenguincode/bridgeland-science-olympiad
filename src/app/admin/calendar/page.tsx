@@ -37,7 +37,7 @@ export default async function AdminCalendarPage() {
             render: (e) => (
               <div className="flex justify-end gap-1">
                 <EditCalendarEventButton event={e} />
-                <DeleteButton action={() => deleteCalendarEventAction(e.id)} description={`"${e.title}" will be permanently removed.`} />
+                <DeleteButton action={deleteCalendarEventAction} id={e.id} description={`"${e.title}" will be permanently removed.`} />
               </div>
             ),
           },

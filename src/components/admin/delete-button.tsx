@@ -17,11 +17,13 @@ import type { ActionResult } from "@/components/admin/crud-dialog";
 
 export function DeleteButton({
   action,
+  id,
   title = "Delete this item?",
   description = "This action cannot be undone.",
   label,
 }: {
-  action: () => Promise<ActionResult>;
+  action: (id: string) => Promise<ActionResult>;
+  id: string;
   title?: string;
   description?: string;
   label?: string;
@@ -31,7 +33,7 @@ export function DeleteButton({
 
   async function handleConfirm() {
     setPending(true);
-    const result = await action();
+    const result = await action(id);
     setPending(false);
     if (result.success) {
       toast.success("Deleted.");

@@ -76,7 +76,7 @@ export default async function AdminOfficersPage() {
             render: (o) => (
               <div className="flex justify-end gap-1">
                 <EditOfficerButton officer={o} />
-                <DeleteButton action={() => deleteOfficerAction(o.id)} description={`"${o.full_name}"'s profile will be permanently removed.`} />
+                <DeleteButton action={deleteOfficerAction} id={o.id} description={`"${o.full_name}"'s profile will be permanently removed.`} />
               </div>
             ),
           },
